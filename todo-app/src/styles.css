@@ -1,0 +1,7 @@
+/* You can add global styles to this file, and also import other style files */
+body {
+    max-width: 600px!important;
+}
+.filters li {
+    margin-right: 5px!important;
+}
