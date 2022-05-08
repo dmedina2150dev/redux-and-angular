@@ -1,5 +1,5 @@
 import { Action, createReducer, on } from "@ngrx/store";
-import { decrement, dividir, increment, multiply } from "./count.actions";
+import { decrement, dividir, increment, multiply, reset } from "./count.actions";
 
 // TODO: Como se haboa ehco en los ejemplos
 // export function countReducer( state: number = 10, action: Action ) {
@@ -22,7 +22,7 @@ const _countReducer = createReducer(
   on(decrement, (state) => state - 1),
   on(multiply, ( state, { num } ) =>  state * num ),
   on(dividir, ( state, { num } ) =>  state / num ),
-  
+  on(reset, (state) => initialState)
 );
 
 export function countReducer(state: any, action: Action) {
