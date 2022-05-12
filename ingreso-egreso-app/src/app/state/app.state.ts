@@ -1,5 +1,8 @@
-import * as ui from './ui.reducers';
+import * as ui from './ui/ui.reducers';
+
+import { User } from '../models/user.model';
 
 export interface AppState {
-    ui: ui.State
+    ui: ui.State,
+    user: User,
  }

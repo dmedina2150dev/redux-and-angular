@@ -11,9 +11,7 @@ export class AppComponent {
 	constructor(
 		private _auth: AuthService
 	) {
-		this._auth.iniAuthListener().subscribe( fUser => {
-			console.log(fUser);
-		});
+		this._auth.iniAuthListener();
 	}
 
 

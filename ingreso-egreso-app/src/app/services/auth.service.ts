@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UserCreated, UserSignin } from '../interfases/user.interface';
+import { map, Observable } from 'rxjs';
 import { 
 	Auth,
 	createUserWithEmailAndPassword,
@@ -7,10 +7,14 @@ import {
 	signOut,
 	authState
 } from '@angular/fire/auth';
-import { Firestore, collection, addDoc } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, collectionData, getDoc, doc, docData, setDoc } from '@angular/fire/firestore';
 
-import { map } from 'rxjs';
+import { UserCreated, UserSignin } from '../interfases/user.interface';
 import { User } from '../models/user.model';
+
+import { Store } from '@ngrx/store';
+import { AppState } from '../state/app.state';
+import * as authAction from '../state/auth/auth.actions';
 
 @Injectable({
 	providedIn: 'root'
@@ -19,22 +23,38 @@ export class AuthService {
 
 	constructor(
 		public auth: Auth,
-		public firestore: Firestore
+		public firestore: Firestore,
+		private store: Store<AppState>
 	) { }
 
 	iniAuthListener() { 
-		return authState(this.auth);
+		return authState(this.auth).subscribe( fUser => {
+
+			if ( fUser ) {
+				this.getUser(fUser.uid)
+					.then( userFirebase => {
+						console.log("FireUser", userFirebase);
+						const user= User.fromFirebase( userFirebase );
+						this.store.dispatch( authAction.setUser({ user }) )
+					})
+					.catch( error => console.error(error) )
+				
+			} else {
+				console.log("No habia usuario logueado")
+				this.store.dispatch( authAction.unSetUser() )
+			}
+
+		});
 	}
 
-	crearUsuario({ nombre, email, password}: UserCreated): Promise<any> {
-		return createUserWithEmailAndPassword( this.auth ,email, password)
+	async crearUsuario({ nombre, email, password}: UserCreated): Promise<any> {
+		return await createUserWithEmailAndPassword( this.auth , email, password)
 			.then( ({ user }) => {
 
-				const newUser = new User( user.uid, nombre, user.email );
-				const userRef = collection(this.firestore, `user`);
-				
-				return addDoc( userRef , {...newUser} );
-		
+				const userRef = collection(this.firestore, 'users');
+				const document = doc(userRef, `${user.uid}`);
+				return setDoc( document , { uid: user.uid, nombre, email: user.email } );
+	
 			})
 
 	}
@@ -51,6 +71,18 @@ export class AuthService {
 		return authState(this.auth).pipe(
 			map( fUser => fUser != null )
 		);
+	}
+
+	async getUser(uid: string) {
+		const docRef = doc(this.firestore, 'users' ,`${uid}`);
+		const docSnap = await getDoc(docRef);
+		
+		if(!docSnap.exists()) {
+			return null;
+
+		}
+		
+		return docSnap.data();
 	}
 
 }

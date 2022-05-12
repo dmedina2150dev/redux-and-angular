@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/state/app.state';
-import * as ui from 'src/app/state/ui.actions';
+import * as ui from 'src/app/state/ui/ui.actions';
 
 import { AuthService } from 'src/app/services/auth.service';
 

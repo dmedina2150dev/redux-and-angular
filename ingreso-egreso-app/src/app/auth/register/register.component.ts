@@ -6,7 +6,7 @@ import { AuthService } from 'src/app/services/auth.service';
 
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/state/app.state';
-import * as ui from 'src/app/state/ui.actions';
+import * as ui from 'src/app/state/ui/ui.actions';
 
 import Swal from 'sweetalert2';
 import { Subscription } from 'rxjs';
@@ -53,8 +53,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
 		this.store.dispatch( ui.isLoading() );
 
 		this._auth.crearUsuario({nombre, email, password})
-			.then( credenciales => {
-				console.log(credenciales)
+			.then( () => {
 
 				this.store.dispatch( ui.stopLoading() );
 				
