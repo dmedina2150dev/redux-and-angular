@@ -30,7 +30,20 @@
                         <div class="form-group">
                             <button 
                                 [disabled]="loginForm.invalid"
-                                class="btn btn-primary submit-btn btn-block" type="submit">Login</button>
+                                class="btn btn-primary submit-btn btn-block" 
+                                type="submit"
+                                *ngIf="!loading">
+                                Login
+                            </button>
+
+                            <button 
+                                [disabled]="true"
+                                type="button"
+                                class="btn btn-primary submit-btn btn-block"
+                                *ngIf="loading">
+                                <i class="fa fa-spin fa-sync"></i>
+                                Espere
+                            </button>
                         </div>
 
 

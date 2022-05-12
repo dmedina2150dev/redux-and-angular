@@ -21,6 +21,9 @@ import { SidebarComponent } from './shared/sidebar/sidebar.component';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { provideAuth,getAuth } from '@angular/fire/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { StoreModule } from '@ngrx/store';
+import { APP_REDUCERS } from './state/app.reducer';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 @NgModule({
   declarations: [
@@ -43,7 +46,9 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
       () => initializeApp(environment.firebase)), 
       provideAuth(() => getAuth()), 
       provideFirestore(() => getFirestore(),
-  ),
+    ), 
+    StoreModule.forRoot(APP_REDUCERS),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
   ],
   providers: [],
   bootstrap: [AppComponent]
