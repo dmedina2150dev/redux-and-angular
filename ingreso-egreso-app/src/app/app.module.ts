@@ -18,13 +18,13 @@ import { FooterComponent } from './shared/footer/footer.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { SidebarComponent } from './shared/sidebar/sidebar.component';
 
-import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
-import { provideAuth,getAuth } from '@angular/fire/auth';
-import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+
 import { StoreModule } from '@ngrx/store';
 import { APP_REDUCERS } from './state/app.reducer';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { AngularFireModule } from '@angular/fire/compat';
 
 @NgModule({
   declarations: [
@@ -43,12 +43,9 @@ import { AngularFireModule } from '@angular/fire/compat';
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    provideFirebaseApp(
-      () => initializeApp(environment.firebase)), 
-      provideAuth(() => getAuth()), 
-      provideFirestore(() => getFirestore(),
-    ),
     AngularFireModule.initializeApp(environment.firebase),
+    AngularFirestoreModule,
+    AngularFireAuthModule,
     StoreModule.forRoot(APP_REDUCERS),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
   ],

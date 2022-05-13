@@ -1,25 +1,23 @@
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
-import { 
-	Auth,
-	createUserWithEmailAndPassword,
-	signInWithEmailAndPassword,
-	signOut,
-	authState
-} from '@angular/fire/auth';
-import { Firestore, collection, getDoc, doc, setDoc } from '@angular/fire/firestore';
+import { map, Subscription } from 'rxjs';
 
 import { UserCreated, UserSignin } from '../interfases/user.interface';
 import { User } from '../models/user.model';
 
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+
 import { Store } from '@ngrx/store';
 import { AppState } from '../state/app.state';
 import * as authAction from '../state/auth/auth.actions';
+import * as ingreEgreActions from '../state/ingress-egress/ingress-egress.actions';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class AuthService {
+	
+	userSubscription!: Subscription;
 
 	private _user!: User | null;
 
@@ -28,68 +26,58 @@ export class AuthService {
 	}
 
 	constructor(
-		public auth: Auth,
-		public firestore: Firestore,
+		public auth: AngularFireAuth,
+		public firestore: AngularFirestore,
 		private store: Store<AppState>
 	) { }
 
 	iniAuthListener() { 
-		return authState(this.auth).subscribe( fUser => {
-			
-			if ( fUser ) {
-				this.getUser(fUser.uid)
-					.then( userFirebase => {
-						const user= User.fromFirebase( userFirebase );
-						this._user = user;
-						this.store.dispatch( authAction.setUser({ user }) )
-					})
-					.catch( error => console.error(error) )
+		this.auth.authState.subscribe( fUser => {
+
+			if (fUser) {
 				
+				this.userSubscription = this.firestore.doc(`${ fUser.uid }/user`)
+					.valueChanges()
+					.subscribe( ( firestoreUser: any ) => {
+
+						const user = User.fromFirebase( firestoreUser );
+						this.store.dispatch( authAction.setUser({ user }));
+					})
 			} else {
-				console.log("No habia usuario logueado")
+				this.userSubscription.unsubscribe();
 				this._user = null;
-				this.store.dispatch( authAction.unSetUser() )
+				this.store.dispatch( authAction.unSetUser() );
+				this.store.dispatch( ingreEgreActions.unSetItems() );
 			}
 
-		});
+		})
+
 	}
 
 	async crearUsuario({ nombre, email, password}: UserCreated): Promise<any> {
-		return await createUserWithEmailAndPassword( this.auth , email, password)
-			.then( ({ user }) => {
+		
+		return this.auth.createUserWithEmailAndPassword( email, password )
+			.then( ({ user }: any) => {
+				const newUser = new User( user.uid, nombre, user?.email );
 
-				const userRef = collection(this.firestore, `${user.uid}`);
-				const document = doc(userRef, 'user');
-				return setDoc( document , { uid: user.uid, nombre, email: user.email } );
-	
+				this.firestore.doc(`${ newUser.uid }/user`)
+					.set( { ... newUser } );
 			})
 
 	}
 
 	login({email , password}: UserSignin) {
-		return signInWithEmailAndPassword( this.auth ,email, password);
+		return this.auth.signInWithEmailAndPassword( email, password );
 	}
 
 	logout() {
-		return signOut(this.auth);
+		return this.auth.signOut();
 	}
 
 	isAuth() {
-		return authState(this.auth).pipe(
-			map( fUser => fUser != null )
+		return this.auth.authState.pipe(
+			map( fbUser => fbUser != null )
 		);
-	}
-
-	async getUser(uid: string) {
-		const docRef = doc(this.firestore, `${uid}`, 'user');
-		const docSnap = await getDoc(docRef);
-		
-		if(!docSnap.exists()) {
-			return null;
-
-		}
-		
-		return docSnap.data();
 	}
 
 }

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, getDoc, doc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { IngressEgress } from '../models/ingress-egress.model';
 import { AuthService } from './auth.service';
@@ -11,15 +10,14 @@ import { map } from 'rxjs';
 export class IngressEgressService {
 
 	constructor(
-		public firestore: Firestore,
 		private _auth: AuthService,
-		private db: AngularFirestore,
+		private firestore: AngularFirestore,
 	) { }
 
 	created( ingressEgress: IngressEgress ) {
 		const uid = this._auth.user?.uid;
 
-		return this.db.doc(`${uid}/ingress-egress`)
+		return this.firestore.doc(`${uid}/ingress-egress`)
 				.collection('items')
 				.add({ ... ingressEgress });
 		
@@ -27,7 +25,8 @@ export class IngressEgressService {
 
 	getAllListener(uid: string) {
 
-		return this.db.collection(`${uid}/ingress-egress/items`)
+		return this.firestore.doc(`${uid}/ingress-egress`)
+			.collection(`items`)
 			.snapshotChanges()
 			.pipe(
 				map( snapshot => snapshot.map( doc => ({ 
@@ -48,5 +47,12 @@ export class IngressEgressService {
 			// 		})
 			// 	})
 			// )
+	}
+
+	delete( uidItem: string ) {
+		const uid = this._auth.user?.uid;
+
+		return this.firestore.doc( `${ uid }/ingress-egress/items/${ uidItem }` )
+			.delete();
 	}
 }
