@@ -21,6 +21,12 @@ import * as authAction from '../state/auth/auth.actions';
 })
 export class AuthService {
 
+	private _user!: User | null;
+
+	get user() {
+		return {...this._user};
+	}
+
 	constructor(
 		public auth: Auth,
 		public firestore: Firestore,
@@ -29,18 +35,20 @@ export class AuthService {
 
 	iniAuthListener() { 
 		return authState(this.auth).subscribe( fUser => {
-
+			
 			if ( fUser ) {
 				this.getUser(fUser.uid)
 					.then( userFirebase => {
 						console.log("FireUser", userFirebase);
 						const user= User.fromFirebase( userFirebase );
+						this._user = user;
 						this.store.dispatch( authAction.setUser({ user }) )
 					})
 					.catch( error => console.error(error) )
 				
 			} else {
 				console.log("No habia usuario logueado")
+				
 				this.store.dispatch( authAction.unSetUser() )
 			}
 
@@ -51,8 +59,8 @@ export class AuthService {
 		return await createUserWithEmailAndPassword( this.auth , email, password)
 			.then( ({ user }) => {
 
-				const userRef = collection(this.firestore, 'users');
-				const document = doc(userRef, `${user.uid}`);
+				const userRef = collection(this.firestore, `${user.uid}`);
+				const document = doc(userRef, 'user');
 				return setDoc( document , { uid: user.uid, nombre, email: user.email } );
 	
 			})
@@ -74,7 +82,7 @@ export class AuthService {
 	}
 
 	async getUser(uid: string) {
-		const docRef = doc(this.firestore, 'users' ,`${uid}`);
+		const docRef = doc(this.firestore, `${uid}`, 'user');
 		const docSnap = await getDoc(docRef);
 		
 		if(!docSnap.exists()) {
