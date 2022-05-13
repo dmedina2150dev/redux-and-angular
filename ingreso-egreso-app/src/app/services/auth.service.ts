@@ -7,7 +7,7 @@ import {
 	signOut,
 	authState
 } from '@angular/fire/auth';
-import { Firestore, collection, addDoc, collectionData, getDoc, doc, docData, setDoc } from '@angular/fire/firestore';
+import { Firestore, collection, getDoc, doc, setDoc } from '@angular/fire/firestore';
 
 import { UserCreated, UserSignin } from '../interfases/user.interface';
 import { User } from '../models/user.model';
@@ -24,7 +24,7 @@ export class AuthService {
 	private _user!: User | null;
 
 	get user() {
-		return {...this._user};
+		return this._user;
 	}
 
 	constructor(
@@ -39,7 +39,6 @@ export class AuthService {
 			if ( fUser ) {
 				this.getUser(fUser.uid)
 					.then( userFirebase => {
-						console.log("FireUser", userFirebase);
 						const user= User.fromFirebase( userFirebase );
 						this._user = user;
 						this.store.dispatch( authAction.setUser({ user }) )
@@ -48,7 +47,7 @@ export class AuthService {
 				
 			} else {
 				console.log("No habia usuario logueado")
-				
+				this._user = null;
 				this.store.dispatch( authAction.unSetUser() )
 			}
 

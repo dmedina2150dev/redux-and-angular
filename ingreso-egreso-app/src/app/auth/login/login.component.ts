@@ -20,7 +20,7 @@ import { Subscription } from 'rxjs';
 export class LoginComponent implements OnInit, OnDestroy {
 	loginForm!: FormGroup;
 	loading: boolean = false;
-	uiSubscription!: Subscription;
+	uiSubscription$!: Subscription;
 
 	constructor(
 		private fb: FormBuilder,
@@ -35,11 +35,11 @@ export class LoginComponent implements OnInit, OnDestroy {
 			password: ['', [Validators.required]]
 		});
 
-		this.uiSubscription = this.store.select('ui').subscribe( ui => this.loading = ui.isLoading );
+		this.uiSubscription$ = this.store.select('ui').subscribe( ui => this.loading = ui.isLoading );
 	}
 
 	ngOnDestroy(): void {
-		this.uiSubscription.unsubscribe();
+		this.uiSubscription$.unsubscribe();
 		
 	}
 

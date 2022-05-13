@@ -24,6 +24,7 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { StoreModule } from '@ngrx/store';
 import { APP_REDUCERS } from './state/app.reducer';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { AngularFireModule } from '@angular/fire/compat';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
       () => initializeApp(environment.firebase)), 
       provideAuth(() => getAuth()), 
       provideFirestore(() => getFirestore(),
-    ), 
+    ),
+    AngularFireModule.initializeApp(environment.firebase),
     StoreModule.forRoot(APP_REDUCERS),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
   ],
