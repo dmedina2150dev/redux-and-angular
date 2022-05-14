@@ -48,6 +48,12 @@ export class StatisticsComponent implements OnInit, OnDestroy {
 	}
 
 	generateStatistics(items: IngressEgress[]) {
+
+		this.totalEgress = 0;
+		this.totalIngress = 0;
+		this.ingress = 0;
+		this.egress = 0; 
+
 		for (const item of items) {
 			if (item.type === 'ingreso') {
 				this.totalIngress += item.amount;
