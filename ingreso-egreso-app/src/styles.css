@@ -1,4 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
+@media  all {
+    .page-break-after ,
+    .page-break-before {
+        display : none ; 
+   } 
+}
+
 .cursor {
     cursor: pointer;
 }
