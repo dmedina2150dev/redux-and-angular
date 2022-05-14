@@ -4,11 +4,11 @@ import { Store } from '@ngrx/store';
 
 import { Subscription } from 'rxjs';
 
-import { IngressEgress } from 'src/app/models/ingress-egress.model';
+import { IngressEgress } from '../../models/ingress-egress.model';
 
-import { AppState } from 'src/app/state/app.state';
 
 import { ChartData, ChartType } from 'chart.js';
+import { AppStateWithIngreso } from '../../state/ingress-egress/ingress-egress.reducers';
 
 @Component({
 	selector: 'app-statistics',
@@ -33,7 +33,7 @@ export class StatisticsComponent implements OnInit, OnDestroy {
 	};
 
 	constructor(
-		private store: Store<AppState>
+		private store: Store<AppStateWithIngreso>
 	) {
 
 	}

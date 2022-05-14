@@ -2,9 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { IngressEgressService } from 'src/app/services/ingress-egress.service';
+import { AppStateWithIngreso } from 'src/app/state/ingress-egress/ingress-egress.reducers';
 import Swal from 'sweetalert2';
 import { IngressEgress } from '../../models/ingress-egress.model';
-import { AppState } from '../../state/app.state';
+
 
 @Component({
 	selector: 'app-detail',
@@ -18,7 +19,7 @@ export class DetailComponent implements OnInit, OnDestroy {
 	ingressEgress!: IngressEgress[];
 
 	constructor(
-		private store: Store<AppState>,
+		private store: Store<AppStateWithIngreso>,
 		private ingresEgresService: IngressEgressService
 	) { }
 	

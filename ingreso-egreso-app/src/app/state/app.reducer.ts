@@ -8,5 +8,4 @@ import { uiReducer } from './ui/ui.reducers';
 export const APP_REDUCERS: ActionReducerMap<AppState> = {
    ui: uiReducer,
    user: authReducer,
-   ingressEgress: ingressEgressReducer
 }

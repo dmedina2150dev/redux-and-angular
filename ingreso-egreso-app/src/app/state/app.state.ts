@@ -7,5 +7,4 @@ import { IngressEgress } from '../models/ingress-egress.model';
 export interface AppState {
     ui: ui.State,
     user: User,
-    ingressEgress: ingresEgres.State
- }
+}

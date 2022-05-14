@@ -10,10 +10,10 @@ const routes: Routes = [
 	{ path: 'login', component: LoginComponent },
 	{ path: 'register', component: RegisterComponent },
 	{ 
-		path: '', 
-		component: DashboardComponent,
-		children: dashboardRoutes,
-		canActivate: [ AuthGuard ]
+		path: '',
+		// canActivate: [ AuthGuard ],//TODO: Este funciona para bloquear las rutas pero carga el modulo igual
+		canLoad: [ AuthGuard ], //TODO: Este funciona igual que el cantActivate pero previene la carga del modulo (se debe implementar el CantLoad en el guadian)
+		loadChildren: () => import('./ingress-egress/ingress-egress.module').then( m => m.IngressEgressModule)
 	},
 	{ path: '**', redirectTo: '' },
 
