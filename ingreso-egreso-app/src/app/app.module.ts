@@ -7,6 +7,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { environment } from '../environments/environment';
 
+import { NgChartsModule } from 'ng2-charts';
+
 
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
@@ -25,6 +27,7 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { StoreModule } from '@ngrx/store';
 import { APP_REDUCERS } from './state/app.reducer';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { OrdenIngressPipe } from './pipes/orden-ingress.pipe';
 
 @NgModule({
   declarations: [
@@ -37,7 +40,8 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     DetailComponent,
     FooterComponent,
     NavbarComponent,
-    SidebarComponent
+    SidebarComponent,
+    OrdenIngressPipe
   ],
   imports: [
     BrowserModule,
@@ -48,6 +52,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     AngularFireAuthModule,
     StoreModule.forRoot(APP_REDUCERS),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+    NgChartsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

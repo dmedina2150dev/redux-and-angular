@@ -40,7 +40,8 @@ export class DetailComponent implements OnInit, OnDestroy {
 		if (uid === undefined) { return; }
 
 		this.ingresEgresService.delete( uid )
-			.then(( ) => {
+			.then(( res ) => {
+				console.log("Respuesta service", res)
 				Swal.fire({
 					icon: 'success',
 					title: 'Eliminado',
@@ -51,7 +52,7 @@ export class DetailComponent implements OnInit, OnDestroy {
 				Swal.fire({
 					icon: 'error',
 					title: 'Error Eliminando',
-					text: 'Registro no se ha borrado' + err
+					text: 'Registro no se ha borrado' + err.message
 				});
 			})
 	}

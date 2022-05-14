@@ -3,6 +3,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { IngressEgress } from '../models/ingress-egress.model';
 import { AuthService } from './auth.service';
 import { map } from 'rxjs';
+import "firebase/firestore";
 
 @Injectable({
 	providedIn: 'root'
@@ -15,11 +16,14 @@ export class IngressEgressService {
 	) { }
 
 	created( ingressEgress: IngressEgress ) {
-		const uid = this._auth.user?.uid;
+		const uidUser = this._auth.user?.uid;
+		// delete ingressEgress.uid; // TODO: Otra opcion para sacar esa propiedad del objeto ingressEgress
+		const { uid, ...ingres } = ingressEgress;
+		console.log(uidUser)
 
-		return this.firestore.doc(`${uid}/ingress-egress`)
+		return this.firestore.doc(`${uidUser}/ingress-egress`)
 				.collection('items')
-				.add({ ... ingressEgress });
+				.add({ ... ingres });
 		
 	}
 
@@ -51,8 +55,9 @@ export class IngressEgressService {
 
 	delete( uidItem: string ) {
 		const uid = this._auth.user?.uid;
-
-		return this.firestore.doc( `${ uid }/ingress-egress/items/${ uidItem }` )
-			.delete();
+		console.log("usuario:", uid)
+		console.log("Ruta delete", `${ uid }/ingress-egress/items/${ uidItem }`)
+		return this.firestore.collection(`${ uid }/ingress-egress/items/`).doc( `${ uidItem }` ).delete();
+		// 0j80lLPJJwa6CQ3CJsTQJtDokmw1/ingress-egress/items/uNLZvDYp2RWjkNlzXKjw
 	}
 }
